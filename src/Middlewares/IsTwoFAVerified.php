@@ -4,6 +4,7 @@ namespace Solutionforest\FilamentEmail2fa\Middlewares;
 
 use Closure;
 use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use Solutionforest\FilamentEmail2fa\Interfaces\RequireTwoFALogin;
 use Solutionforest\FilamentEmail2fa\Pages\TwoFactorAuth;
@@ -14,7 +15,7 @@ class IsTwoFAVerified
     {
         $user = Filament::auth()->user();
 
-        if (Filament::hasEmailVerification() && !$user->hasVerifiedEmail()) {
+        if ($user instanceof MustVerifyEmail && Filament::hasEmailVerification() && !$user->hasVerifiedEmail()) {
             return $next($request);
         }
 
