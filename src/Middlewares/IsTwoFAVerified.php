@@ -14,6 +14,10 @@ class IsTwoFAVerified
     {
         $user = Filament::auth()->user();
 
+        if (Filament::hasEmailVerification() && !$user->hasVerifiedEmail()) {
+            return $next($request);
+        }
+
         try {
             $routeName = $request->route()->getName();
         } catch (\Exception $e) {
@@ -27,7 +31,6 @@ class IsTwoFAVerified
         if ($user instanceof RequireTwoFALogin && $user->isTwoFaVerified($request->session()->getId())) {
 
             return $next($request);
-
         }
 
         return redirect(route(TwoFactorAuth::getRouteName()));
